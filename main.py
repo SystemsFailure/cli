@@ -13,6 +13,9 @@ import random
 
 import mutations
 
+# from firebaseConf import createNewUser
+from firebaseConf.firebaseApp import createNewUser
+
 MARKDOWN = """
 # This is an h1
 
@@ -59,6 +62,16 @@ def init(mutations:str = typer.Option(
         "navigation", help="The name to say hi to.", autocompletion=complete_commands
     )):
     print(mutations)
+
+@app.command()
+def createuser(command: str = typer.Option(
+    ..., '--create', '-c'
+)):
+    if command == 'create':
+        createNewUser()
+    else:
+        print('what yuo do?')
+
 
 
 @app.command()
