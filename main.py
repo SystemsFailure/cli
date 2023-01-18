@@ -1,13 +1,17 @@
 import typer
+import time
 from rich import print
 from rich.panel import Panel
 from rich.console import Console
 from rich.table import Table
 from rich.prompt import Prompt
 from rich.markdown import Markdown
+from rich.progress import track
 
-from typing import Optional
+from typing import Optional, List
 import random
+
+import mutations
 
 MARKDOWN = """
 # This is an h1
@@ -20,6 +24,7 @@ Rich can do a pretty *decent* job of rendering markdown.
 md = Markdown(MARKDOWN)
 
 app = typer.Typer()
+app.add_typer(mutations.app, name='mutations')
 console = Console()
 err_console = Console(stderr=True)
 
@@ -33,18 +38,47 @@ def defaultASK():
     name = Prompt.ask("Enter your name", default='None')
     print(name)
 
+def _callback(value: str):
+    if value != "error":
+        raise typer.BadParameter("Only error is allowed")
+    return value
+
+def progress():
+    total = 0
+    for value in track(range(100), description="Processing..."):
+        # Fake processing time
+        time.sleep(0.01)
+        total += 1
+    print(f"Processed {total} things.")
+
+def complete_commands():
+    return ["init", "delete", "detected"]
+
+@app.command()
+def init(mutations:str = typer.Option(
+        "navigation", help="The name to say hi to.", autocompletion=complete_commands
+    )):
+    print(mutations)
+
+
 @app.command()
 def download(
         url: Optional[str] = typer.Argument(...),
-        name: str = typer.Argument(..., help="The name of the user to greet"),
+        name: str = typer.Argument(..., help="The name of the user to greet", autocompletion=complete_commands),
         password: str = typer.Option(
             ..., prompt=True, confirmation_prompt=True, hide_input=True
         ),
+        user_name: str = typer.Option(..., "--name", '-n'), # Here option cli with -n reading so --name
+        formal: str = typer.Option(False, "--formal", '-f'), # Here option cli with -f reading so --formal
         random_int: Optional[int] = typer.Argument(random.choice([0,1,2,3,4,5,6])),
         ):
+        # python main.py download 'quest' eric --name Browse - It's so request to console. Need to past this in powershell or cmd
     if url == 'quest':
+        progress()
         print(random_int)
         print(name)
+        print(user_name)
+        print(formal)
         print(password)
         console.print(md)
         print(Panel("Hello, [green]USER!", title="Welcome", subtitle="Thank you for view!"))
