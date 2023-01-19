@@ -68,12 +68,15 @@ def init(mutations:str = typer.Option(
 def createuser(command: str = typer.Option(
     ..., '--create', '-c'
 )):
+    """
+        lovela! Here after option: --create use DLC word create :)
+    """
     if command == 'create':
         data = createNewUser()
         register(name=data['name'], email=data['email'], password=data['password'])
         
     else:
-        print('what yuo do?')
+        err_console.print("[bold red]Error[/bold red] : " + "not so command: {}, please check your command or use --help option it visible all list commands".format(command))
 
 
 
