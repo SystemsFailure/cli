@@ -14,7 +14,8 @@ import random
 import mutations
 
 # from firebaseConf import createNewUser
-from firebaseConf.firebaseApp import createNewUser
+from firebaseConf.userController import createNewUser
+from firebaseConf.auth import register
 
 MARKDOWN = """
 # This is an h1
@@ -68,7 +69,9 @@ def createuser(command: str = typer.Option(
     ..., '--create', '-c'
 )):
     if command == 'create':
-        createNewUser()
+        data = createNewUser()
+        register(name=data['name'], email=data['email'], password=data['password'])
+        
     else:
         print('what yuo do?')
 
